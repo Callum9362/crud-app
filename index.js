@@ -1,6 +1,21 @@
 var express = require('express');
 const app = express();
 const PORT = 3000;
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/test', {
+    useUnifiedTopology: true,
+    useNewUrlParser: true 
+});
+
+const Cat = mongoose.model('Cat', {name: String});
+
+const kitty = new Cat({name: 'Mimi'});
+
+kitty.save().then((res =>{
+    console.log(res);
+    console.log('Meow');
+}))
 
 //Import our routes
 //const routes = require('./src/routes/crmRoutes')
@@ -8,12 +23,6 @@ const PORT = 3000;
 
 app.get('/', function(req, res, next){
     console.log('Req Method: ', req.method)
-    next();
-}, function(req, res, next){
-    console.log('Request Original Url', req.originalUrl);
-    next();
-}, function(req, res, next){
-    res.send('Request was successful');
 })
 
 app.listen(PORT, () => {
