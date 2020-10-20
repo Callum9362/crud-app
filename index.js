@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const BlogSchema =  require("./src/models/crmModel");
 const blogModel = mongoose.model('blog', BlogSchema);
 
-
+//CREATE method
 app.post('/newBlog', (req, res) => {
     let blog = new blogModel(req.body);
     blog.save((err, blogModel)=>{
@@ -26,6 +26,7 @@ app.post('/newBlog', (req, res) => {
     })
 })
 
+//RETURN method
 let getAllBlogs = (req, res) => {
     blogModel.find({}, (err, blogs) => {
         if(err){
@@ -48,7 +49,7 @@ let getBlogByID = (req, res) => {
 
 app.get('/blog/:blogid', getBlogByID);
 
-
+//UPDATE method
 let updateBlog = (req, res) => {
     blogModel.findByIdAndUpdate({_id: req.params.blogid}, req.body, {new: true}, (err, update)=>{
        if(err){
@@ -59,6 +60,19 @@ let updateBlog = (req, res) => {
 }
 
 app.put('/blog/:blogid', updateBlog);
+
+//DELETE method
+
+let deleteBlog = (req, res) => {
+    blogModel.remove({_id: req.params.blogid}, (err) => {
+        if(err){
+            res.send(err);
+        }
+        res.json({message: 'Blog deleted successfully'})
+    })
+}
+
+app.delete('/blog/:blogid', deleteBlog);
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`)
