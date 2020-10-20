@@ -2,27 +2,28 @@ var express = require('express');
 const app = express();
 const PORT = 3000;
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
 mongoose.connect('mongodb://localhost/test', {
     useUnifiedTopology: true,
     useNewUrlParser: true 
 });
 
-const Cat = mongoose.model('Cat', {name: String});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-const kitty = new Cat({name: 'Mimi'});
+const BlogSchema =  require("./src/models/crmModel");
+const blogModel = mongoose.model('blog', BlogSchema);
 
-kitty.save().then((res =>{
-    console.log(res);
-    console.log('Meow');
-}))
 
-//Import our routes
-//const routes = require('./src/routes/crmRoutes')
-//routes(app);
-
-app.get('/', function(req, res, next){
-    console.log('Req Method: ', req.method)
+app.post('/newBlog', (req, res) => {
+    let blog = new blogModel(req.body);
+    blog.save((err, blogModel)=>{
+        if(err){
+            res.send(err);
+        }
+        res.json(blog);
+    })
 })
 
 app.listen(PORT, () => {
